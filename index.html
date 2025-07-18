@@ -390,7 +390,7 @@
             size: "mega",
             hero: {
               type: "image",
-              url: signature,
+              url: "https://f.ptcdn.info/602/072/000/qopg5fj7crBMoJjU5cM-o.jpg",
               size: "full",
               aspectRatio: "3:1",
               aspectMode: "fit",
@@ -453,10 +453,12 @@
         };
 
         try {
-          if (!liff.isInitialized()) {
-            await liff.init({ liffId: "1657704109-dZayMMoA" }); // 🟠 แก้ตรงนี้ด้วย
-          }
-          await liff.shareTargetPicker([flexMessage]);
+            if (liff.isInClient()) {
+            // อยู่ใน LINE app (ทั้ง mobile และ desktop)
+            await liff.sendMessages([flexMessage]);
+            }else{
+              await liff.shareTargetPicker([flexMessage]);
+            }
         } catch (err) {
           console.error("LINE Flex Message Error:", err);
           alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
