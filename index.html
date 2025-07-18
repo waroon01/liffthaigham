@@ -322,7 +322,7 @@
             if (!response.ok) throw new Error("ไม่สามารถบันทึกข้อมูลได้");
 
             showSuccessPopup();
-            sendFlexToLINE(fullName, signature);
+            sendFlexToLINE(data.fullName);
             this.reset();
             signaturePad.clear();
           } catch (err) {
