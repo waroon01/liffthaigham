@@ -331,9 +331,9 @@
             if (response.ok) {
               document.getElementById("namesig").innerText = `${data.fullName}`;
               document.getElementById("imgsig").src = data.signature;
-
+              
               showSuccessPopup();
-              sendFlexToLINE(data.fullName, response.signaturefileUrl);
+              sendFlexToLINE(data.fullName, response.fileUrl);
             } else {
               throw new Error("ไม่สามารถบันทึกข้อมูลได้");
             }
