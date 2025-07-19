@@ -379,7 +379,7 @@
       window.addEventListener("DOMContentLoaded", async () => {
         await liff.init({ liffId: "1657704109-dZayMMoA" }); // <-- ใส่ LIFF ID จริงของคุณ
 
-        if (!liff.isLoggedIn()) {
+        if (!liff.isLoggedIn({ redirectUri: window.location.href })) {
           liff.login(); // ล็อกอินแล้วจะกลับมาอัตโนมัติ
           return;
         }
