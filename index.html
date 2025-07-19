@@ -62,6 +62,13 @@
         font-size: 0.95rem;
         line-height: 1.8;
       }
+      #imgsig {
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        margin-top: 0.7rem;
+        margin-bottom: 1rem;
+      }
 
       @keyframes popupSlide {
         0% {
@@ -112,17 +119,7 @@
         </div>
 
         <!-- ข้อความถวายสัตย์ -->
-        <div class="bg-white bg-opacity-70 rounded-xl p-1 text-center">
-          <div class="oath-text leading-relaxed">
-            ข้าพระพุทธเจ้า ขอถวายสัตย์ปฏิญาณว่า
-            จะประพฤติปฏิบัติตนเป็นข้าราชการที่ดีและพลังของแผ่นดิน
-            มีความซื่อสัตย์สุจริต เจริญรอยตามเบื้องพระยุคลบาท
-            มุ่งมั่นแน่วแน่แก้ไขปัญหาของประเทศชาติและประชาชน
-            สร้างสรรค์คุณประโยชน์แก่แผ่นดิน
-            และดำเนินชีวิตโดยยึดมั่นในหลักธรรมคำสอนแห่งศาสนา
-            ตามแนวทางพระบรมราโชวาทตลอดไป
-          </div>
-        </div>
+        <div class="bg-white bg-opacity-70 rounded-xl p-1 text-center"></div>
 
         <form id="loyaltyForm" class="space-y-1">
           <!-- สถานะ -->
@@ -229,12 +226,24 @@
       id="successPopup"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
     >
-      <div class="bg-white rounded-xl p-6 text-center popup max-w-sm">
-        <div class="text-4xl mb-3">🎉</div>
-        <h2 class="text-lg font-bold text-amber-700">ขอบคุณที่ร่วมลงนาม!</h2>
-        <p class="text-sm text-amber-600 mb-4">
-          ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว
+      <div
+        class="bg-white rounded-xl p-6 text-center popup w-full max-w-xs sm:max-w-sm mx-4"
+      >
+        <div class="text-4xl mb-1"></div>
+        <div class="oath-text leading-relaxed">
+          ข้าพระพุทธเจ้า ขอถวายสัตย์ปฏิญาณว่า
+          จะประพฤติปฏิบัติตนเป็นข้าราชการที่ดีและพลังของแผ่นดิน
+          มีความซื่อสัตย์สุจริต เจริญรอยตามเบื้องพระยุคลบาท
+          มุ่งมั่นแน่วแน่แก้ไขปัญหาของประเทศชาติและประชาชน
+          สร้างสรรค์คุณประโยชน์แก่แผ่นดิน
+          และดำเนินชีวิตโดยยึดมั่นในหลักธรรมคำสอนแห่งศาสนา
+          ตามแนวทางพระบรมราโชวาทตลอดไป
+        </div>
+        <p class="text-md text-amber-600 mb-1">
+          ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ ข้าพระพุทธเจ้า
         </p>
+        <p class="text-md text-amber-600 mb-2" id="namesig"></p>
+        <img src="" alt="" id="imgsig" />
         <button
           onclick="closePopup()"
           class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded"
@@ -319,10 +328,15 @@
               }
             );
 
-            if (!response.ok) throw new Error("ไม่สามารถบันทึกข้อมูลได้");
+            if (response.ok) {
+              document.getElementById("namesig").innerText = `${data.fullName}`;
+              document.getElementById("imgsig").src = data.signature;
 
-            showSuccessPopup();
-            sendFlexToLINE(data.fullName);
+              showSuccessPopup();
+              sendFlexToLINE(data.fullName, response.signaturefileUrl);
+            } else {
+              throw new Error("ไม่สามารถบันทึกข้อมูลได้");
+            }
             this.reset();
             signaturePad.clear();
           } catch (err) {
@@ -381,89 +395,93 @@
         resizeCanvas();
       });
 
-      async function sendFlexToLINE(fullName) {
-        const flexMessage = {
-          type: "flex",
-          altText: "ขอบคุณที่ร่วมถวายสัตย์ปฏิญาณ",
-          contents: {
-            type: "bubble",
-            size: "mega",
-            hero: {
-              type: "image",
-              url: "https://f.ptcdn.info/602/072/000/qopg5fj7crBMoJjU5cM-o.jpg",
-              size: "full",
-              aspectRatio: "3:1",
-              aspectMode: "fit",
-            },
-            body: {
-              type: "box",
-              layout: "vertical",
-              spacing: "md",
-              contents: [
-                {
-                  type: "text",
-                  text: "🎉 ขอขอบคุณ",
-                  weight: "bold",
-                  size: "lg",
-                  color: "#D4AF37",
-                },
-                {
-                  type: "text",
-                  text: fullName,
-                  weight: "bold",
-                  size: "xl",
-                  color: "#111111",
-                  wrap: true,
-                },
-                {
-                  type: "text",
-                  text: "ที่ร่วมถวายสัตย์ปฏิญาณเพื่อเป็นข้าราชการที่ดีและพลังของแผ่นดิน",
-                  size: "sm",
-                  color: "#666666",
-                  wrap: true,
-                },
-              ],
-            },
-            footer: {
-              type: "box",
-              layout: "vertical",
-              spacing: "sm",
-              contents: [
-                {
-                  type: "button",
-                  style: "primary",
-                  color: "#FBBF24",
-                  action: {
-                    type: "uri",
-                    label: "ดูรายละเอียดเพิ่มเติม",
-                    uri: "https://moe.go.th/", // เปลี่ยนเป็นลิงก์จริง
-                  },
-                },
-              ],
-            },
-            styles: {
-              body: {
-                backgroundColor: "#FFF8E1",
-              },
-              footer: {
-                backgroundColor: "#FFFAF0",
-              },
-            },
-          },
-        };
-
-        try {
-            if (liff.isInClient()) {
-            // อยู่ใน LINE app (ทั้ง mobile และ desktop)
-            await liff.sendMessages([flexMessage]);
-            }else{
-              await liff.shareTargetPicker([flexMessage]);
-            }
-        } catch (err) {
-          console.error("LINE Flex Message Error:", err);
-          alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
-        }
+async function sendFlexToLINE(fullName, signature) {
+  const imageBlock = signature
+    ? {
+        type: "image",
+        url: signature,
+        size: "lg",
+        aspectMode: "cover",
       }
+    : null;
+
+  const contents = [
+    {
+      type: "text",
+      text:
+        '"ข้าพระพุทธเจ้า ขอถวายสัตย์ปฏิญาณว่า\nจะประพฤติปฏิบัติตนเป็นข้าราชการที่ดีและพลังของแผ่นดิน\nมีความซื่อสัตย์สุจริต เจริญรอยตามเบื้องพระยุคลบาท\nมุ่งมั่นแน่วแน่แก้ไขปัญหาของประเทศชาติและประชาชน           สร้างสรรค์คุณประโยชน์แก่แผ่นดิน           และดำเนินชีวิตโดยยึดมั่นในหลักธรรมคำสอนแห่งศาสนา\nตามแนวทางพระบรมราโชวาทตลอดไป"',
+      align: "center",
+      wrap: true,
+      size: "sm",
+      color: "#7B4019",
+    },
+    {
+      type: "box",
+      layout: "vertical",
+      contents: [
+        ...(imageBlock ? [imageBlock] : []), // เพิ่มเฉพาะถ้ามี
+        {
+          type: "text",
+          text: "ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ\n" + fullName,
+          align: "center",
+          wrap: true,
+          size: "sm",
+          color: "#FFFFFF",
+          margin: "md",
+        },
+      ],
+      backgroundColor: "#d4af37",
+      paddingStart: "20px",
+      paddingEnd: "20px",
+      margin: "md",
+    },
+  ];
+
+  const flexMessage = {
+    type: "flex",
+    altText: "ขอบคุณที่ร่วมถวายสัตย์ปฏิญาณ",
+    contents: {
+      type: "bubble",
+      size: "giga",
+      hero: {
+        type: "image",
+        url: "https://res.cloudinary.com/gukkghu/image/upload/v1752866998/%E0%B8%AA%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%87_7_-_%E0%B9%80%E0%B8%89%E0%B8%A5%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%8A%E0%B8%99%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%A9%E0%B8%B2_6_%E0%B8%A3%E0%B8%AD%E0%B8%9A_%E0%B8%A310_komxqy.png",
+        size: "full",
+        aspectRatio: "16:9",
+        aspectMode: "cover",
+        action: { type: "uri", uri: "https://line.me/" },
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        contents,
+        backgroundColor: "#d4af37",
+        paddingStart: "20px",
+        paddingEnd: "20px",
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        spacing: "sm",
+        contents: [],
+        flex: 0,
+        backgroundColor: "#d4af37",
+      },
+    },
+  };
+
+  try {
+    if (liff.isInClient()) {
+      await liff.sendMessages([flexMessage]);
+    } else {
+      await liff.shareTargetPicker([flexMessage]);
+    }
+  } catch (err) {
+    console.error("LINE Flex Message Error:", err);
+    alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
+  }
+}
+
     </script>
   </body>
 </html>
