@@ -329,14 +329,17 @@
             );
 
             if (response.ok) {
+              const result = await response.json(); // ✅ แปลง response เป็น JSON ก่อน
+              console.log(result.fileUrl); // ✅ ตอนนี้ถึงจะเข้าถึง fileUrl ได้
+            
               document.getElementById("namesig").innerText = `${data.fullName}`;
               document.getElementById("imgsig").src = data.signature;
-              
+            
               showSuccessPopup();
-              console.log(response.fileUrl)
-              sendFlexToLINE(data.fullName, response.fileUrl);
+            
+              sendFlexToLINE(data.fullName, result.fileUrl); // ✅ ส่งลิงก์ที่ได้ไปใช้
             } else {
-              throw new Error("ไม่สามารถบันทึกข้อมูลได้");
+              console.error("ส่งข้อมูลไม่สำเร็จ", response.statusText);
             }
             this.reset();
             signaturePad.clear();
