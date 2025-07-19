@@ -83,13 +83,23 @@
     </style>
   </head>
   <body class="min-h-screen flex justify-end items-center p-6">
+    <div
+      id="showimgProfile"
+      class="rounded-full w-20 h-20 absolute top-3 right-6 bg-pink-400 bg-opacity-70"
+    >
+      <img
+        src="https://res.cloudinary.com/gukkghu/image/upload/v1646575846/gukkghu/%E0%B8%87%E0%B8%B2%E0%B8%99%E0%B8%AD%E0%B8%AD%E0%B8%81%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A1%E0%B8%B5%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD_aytvpq.png"
+        width="full"
+        alt=""
+      />
+    </div>
     <!-- Main Form Card -->
     <div
       id="formWrapper"
       class="hidden fixed inset-0 z-40 sm:inset-auto sm:right-4 sm:bottom-4 w-full sm:max-w-lg flex items-center justify-center p-2 sm:p-0"
     >
       <div
-        class="glass-card w-full max-w-lg rounded-xl p-4 sm:p-8 space-y-6 z-10 max-h-[90vh] overflow-y-auto"
+        class="glass-card w-full max-w-lg rounded-xl p-4 sm:pt-2 sm:p-6 space-y-6 z-10 max-h-[90vh] overflow-y-auto"
       >
         <div class="flex justify-end">
           <button
@@ -104,7 +114,7 @@
           <div class="flex justify-center">
             <img
               src="https://res.cloudinary.com/gukkghu/image/upload/v1646575846/gukkghu/%E0%B8%87%E0%B8%B2%E0%B8%99%E0%B8%AD%E0%B8%AD%E0%B8%81%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A1%E0%B8%B5%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD_aytvpq.png"
-              width="70px"
+              width="120px"
               alt=""
             />
           </div>
@@ -119,9 +129,9 @@
         </div>
 
         <!-- ข้อความถวายสัตย์ -->
-        <div class="bg-white bg-opacity-70 rounded-xl p-1 text-center"></div>
+        <!-- <div class="bg-white bg-opacity-70 rounded-xl p-1 text-center"></div> -->
 
-        <form id="loyaltyForm" class="space-y-1">
+        <form id="loyaltyForm" class="space-y-4">
           <!-- สถานะ -->
           <div>
             <label class="block text-sm font-semibold text-amber-800 mb-1"
@@ -186,7 +196,7 @@
             >
             <canvas
               id="signaturePad"
-              class="signature-pad w-full h-36"
+              class="signature-pad w-full h-32"
             ></canvas>
             <div class="flex justify-between items-center mt-2">
               <button
@@ -212,21 +222,15 @@
         </form>
       </div>
     </div>
-<!-- ปุ่มเปิดฟอร์ม -->
-<!-- ปุ่มเปิดฟอร์ม -->
-<button
-  id="openFormBtn"
-  onclick="toggleForm()"
-  class="absolute bottom-4 left-1/2 -translate-x-1/2
-         sm:fixed sm:right-4 sm:bottom-4 sm:left-auto sm:translate-x-0
-         z-50 bg-gradient-to-r from-yellow-400 to-amber-500
-         text-white font-bold py-4 px-6 sm:py-6 sm:px-10
-         rounded-full shadow-lg hover:scale-105
-         transition-all text-lg sm:text-2xl md:text-xl
-         border border-gray-400"
->
-  ✍️ ร่วมลงนาม
-</button>
+    <!-- ปุ่มเปิดฟอร์ม -->
+    <!-- ปุ่มเปิดฟอร์ม -->
+    <button
+      id="openFormBtn"
+      onclick="toggleForm()"
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 sm:fixed sm:right-4 sm:bottom-4 sm:left-auto sm:translate-x-0 z-50 bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-bold py-4 px-6 sm:py-6 sm:px-10 rounded-full shadow-lg hover:scale-105 transition-all text-lg sm:text-2xl md:text-xl border border-gray-400"
+    >
+      ✍️ ร่วมลงนาม
+    </button>
 
     <!-- Popup -->
     <div
@@ -264,7 +268,7 @@
     <script>
       const canvas = document.getElementById("signaturePad");
       const signaturePad = new SignaturePad(canvas, {
-        backgroundColor: 'rgba(0, 0, 0, 0)', // ✅ โปร่งใส
+        backgroundColor: "rgba(0, 0, 0, 0)", // ✅ โปร่งใส
         penColor: "#d4af37", // สีทอง
       });
 
@@ -338,12 +342,12 @@
             if (response.ok) {
               const result = await response.json(); // ✅ แปลง response เป็น JSON ก่อน
               console.log(result.fileUrl); // ✅ ตอนนี้ถึงจะเข้าถึง fileUrl ได้
-            
+
               document.getElementById("namesig").innerText = `${data.fullName}`;
               document.getElementById("imgsig").src = data.signature;
-            
+
               showSuccessPopup();
-            
+
               sendFlexToLINE(data.fullName, result.fileUrl); // ✅ ส่งลิงก์ที่ได้ไปใช้
             } else {
               console.error("ส่งข้อมูลไม่สำเร็จ", response.statusText);
@@ -391,6 +395,10 @@
           return;
         }
 
+        const profile = await liff.getProfile();
+        console.log("👤 LINE Profile:", profile);
+        document.getElementById('showimgProfile').src = "profile.pictureUrl" || "https://png.pngtree.com/png-clipart/20200224/original/pngtree-male-avatar-simple-cartoon-design-png-image_5230556.jpg"
+
         const status = document.querySelector('[name="status"]').value;
         const isGov = status === "ข้าราชการ";
 
@@ -406,100 +414,95 @@
         resizeCanvas();
       });
 
-async function sendFlexToLINE(fullName, signature) {
-const imageBlock = signature
-  ? {
-      type: "image",
-      url: signature,
-      size: "full",       // ขยายเต็มแนวกว้าง
-      aspectMode: "fit",  // แสดงภาพทั้งหมด
-      aspectRatio: "3:1", // ปรับอัตราส่วนแนวนอน (เช่น ลายเซ็นมักจะกว้าง)
-    }
-  : null;
+      async function sendFlexToLINE(fullName, signature) {
+        const imageBlock = signature
+          ? {
+              type: "image",
+              url: signature,
+              size: "full", // ขยายเต็มแนวกว้าง
+              aspectMode: "fit", // แสดงภาพทั้งหมด
+              aspectRatio: "3:1", // ปรับอัตราส่วนแนวนอน (เช่น ลายเซ็นมักจะกว้าง)
+            }
+          : null;
 
+        const contents = [
+          {
+            type: "text",
+            text: '"ข้าพระพุทธเจ้า ขอถวายสัตย์ปฏิญาณว่า\nจะประพฤติปฏิบัติตนเป็นข้าราชการที่ดี\nและร่วมเป็นพลังของแผ่นดิน\nดซื่อสัตย์สุจริตเจริญรอยตามเบื้องพระยุคลบาท\nมุ่งมั่นแน่วแน่ในการทำงานเพื่อประโยชน์ส่วนรวม\n สร้างสรรค์คุณประโยชน์แก่แผ่นดินและ\nดำเนินชีวิตโดยยึดมั่นในหลักธรรมคำสอนแห่งศาสนา\nตามแนวทางพระบรมราโชวาทตลอดไป"',
+            align: "center",
+            wrap: true,
+            size: "sm",
+            color: "#7B4019",
+          },
+          {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              ...(imageBlock ? [imageBlock] : []), // เพิ่มเฉพาะถ้ามี
+              {
+                type: "text",
+                text: "ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ\n" + fullName,
+                align: "center",
+                wrap: true,
+                size: "sm",
+                color: "#7B4019",
+                margin: "md",
+              },
+            ],
+            backgroundColor: "#FFEEA9",
+            paddingStart: "20px",
+            paddingEnd: "20px",
+            margin: "md",
+          },
+        ];
 
-  const contents = [
-    {
-      type: "text",
-      text:
-        '"ข้าพระพุทธเจ้า ขอถวายสัตย์ปฏิญาณว่า\nจะประพฤติปฏิบัติตนเป็นข้าราชการที่ดี\nและร่วมเป็นพลังของแผ่นดิน\nดซื่อสัตย์สุจริตเจริญรอยตามเบื้องพระยุคลบาท\nมุ่งมั่นแน่วแน่ในการทำงานเพื่อประโยชน์ส่วนรวม\n สร้างสรรค์คุณประโยชน์แก่แผ่นดินและ\nดำเนินชีวิตโดยยึดมั่นในหลักธรรมคำสอนแห่งศาสนา\nตามแนวทางพระบรมราโชวาทตลอดไป"',
-      align: "center",
-      wrap: true,
-      size: "sm",
-      color: "#7B4019",
-    },
-    {
-      type: "box",
-      layout: "vertical",
-      contents: [
-        ...(imageBlock ? [imageBlock] : []), // เพิ่มเฉพาะถ้ามี
-        {
-          type: "text",
-          text: "ด้วยเกล้า ด้วยกระหม่อม ขอเดชะ\n" + fullName,
-          align: "center",
-          wrap: true,
-          size: "sm",
-          color: "#7B4019",
-          margin: "md",
-        },
-      ],
-      backgroundColor: "#FFEEA9",
-      paddingStart: "20px",
-      paddingEnd: "20px",
-      margin: "md",
-    },
-  ];
+        const flexMessage = {
+          type: "flex",
+          altText: "ขอบคุณที่ร่วมถวายสัตย์ปฏิญาณ",
+          contents: {
+            type: "bubble",
+            size: "giga",
+            hero: {
+              type: "image",
+              url: "https://res.cloudinary.com/gukkghu/image/upload/v1752866998/%E0%B8%AA%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%87_7_-_%E0%B9%80%E0%B8%89%E0%B8%A5%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%8A%E0%B8%99%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%A9%E0%B8%B2_6_%E0%B8%A3%E0%B8%AD%E0%B8%9A_%E0%B8%A310_komxqy.png",
+              size: "full",
+              aspectRatio: "16:9",
+              aspectMode: "cover",
+              action: { type: "uri", uri: "https://line.me/" },
+            },
+            body: {
+              type: "box",
+              layout: "vertical",
+              contents,
+              backgroundColor: "#FFEEA9",
+              paddingStart: "20px",
+              paddingEnd: "20px",
+            },
+            footer: {
+              type: "box",
+              layout: "vertical",
+              spacing: "sm",
+              contents: [],
+              flex: 0,
+              backgroundColor: "#FFEEA9",
+            },
+          },
+        };
 
-  const flexMessage = {
-    type: "flex",
-    altText: "ขอบคุณที่ร่วมถวายสัตย์ปฏิญาณ",
-    contents: {
-      type: "bubble",
-      size: "giga",
-      hero: {
-        type: "image",
-        url: "https://res.cloudinary.com/gukkghu/image/upload/v1752866998/%E0%B8%AA%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%87_7_-_%E0%B9%80%E0%B8%89%E0%B8%A5%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%8A%E0%B8%99%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%A3%E0%B8%A9%E0%B8%B2_6_%E0%B8%A3%E0%B8%AD%E0%B8%9A_%E0%B8%A310_komxqy.png",
-        size: "full",
-        aspectRatio: "16:9",
-        aspectMode: "cover",
-        action: { type: "uri", uri: "https://line.me/" },
-      },
-      body: {
-        type: "box",
-        layout: "vertical",
-        contents,
-        backgroundColor: "#FFEEA9",
-        paddingStart: "20px",
-        paddingEnd: "20px",
-      },
-      footer: {
-        type: "box",
-        layout: "vertical",
-        spacing: "sm",
-        contents: [],
-        flex: 0,
-        backgroundColor: "#FFEEA9",
-      },
-    },
-  };
+        try {
+          if (liff.isInClient()) {
+            await liff.sendMessages([flexMessage]);
+          } else {
+            await liff.shareTargetPicker([flexMessage]);
+          }
 
-try {
-  if (liff.isInClient()) {
-    await liff.sendMessages([flexMessage]);
-  } else {
-    await liff.shareTargetPicker([flexMessage]);
-  }
-
-  // ✅ ปิดหน้าต่าง LIFF หลังจากส่งข้อความสำเร็จ
-  liff.closeWindow();
-
-} catch (err) {
-  console.error("LINE Flex Message Error:", err);
-  alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
-}
-
-}
-
+          // ✅ ปิดหน้าต่าง LIFF หลังจากส่งข้อความสำเร็จ
+          liff.closeWindow();
+        } catch (err) {
+          console.error("LINE Flex Message Error:", err);
+          alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
+        }
+      }
     </script>
   </body>
 </html>
