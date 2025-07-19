@@ -333,6 +333,7 @@
               document.getElementById("imgsig").src = data.signature;
               
               showSuccessPopup();
+              console.log(response.fileUrl)
               sendFlexToLINE(data.fullName, response.fileUrl);
             } else {
               throw new Error("ไม่สามารถบันทึกข้อมูลได้");
