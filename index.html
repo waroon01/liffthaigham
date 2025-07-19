@@ -483,16 +483,21 @@ const imageBlock = signature
     },
   };
 
-  try {
-    if (liff.isInClient()) {
-      await liff.sendMessages([flexMessage]);
-    } else {
-      await liff.shareTargetPicker([flexMessage]);
-    }
-  } catch (err) {
-    console.error("LINE Flex Message Error:", err);
-    alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
+try {
+  if (liff.isInClient()) {
+    await liff.sendMessages([flexMessage]);
+  } else {
+    await liff.shareTargetPicker([flexMessage]);
   }
+
+  // ✅ ปิดหน้าต่าง LIFF หลังจากส่งข้อความสำเร็จ
+  liff.closeWindow();
+
+} catch (err) {
+  console.error("LINE Flex Message Error:", err);
+  alert("ไม่สามารถส่งข้อความ LINE ได้: " + err.message);
+}
+
 }
 
     </script>
