@@ -400,14 +400,16 @@
       });
 
 async function sendFlexToLINE(fullName, signature) {
-  const imageBlock = signature
-    ? {
-        type: "image",
-        url: signature,
-        size: "lg",
-        aspectMode: "cover",
-      }
-    : null;
+const imageBlock = signature
+  ? {
+      type: "image",
+      url: signature,
+      size: "full",       // ขยายเต็มแนวกว้าง
+      aspectMode: "fit",  // แสดงภาพทั้งหมด
+      aspectRatio: "3:1", // ปรับอัตราส่วนแนวนอน (เช่น ลายเซ็นมักจะกว้าง)
+    }
+  : null;
+
 
   const contents = [
     {
