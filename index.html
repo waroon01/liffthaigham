@@ -83,7 +83,7 @@
     </style>
   </head>
   <body class="min-h-screen flex justify-end items-center p-6">
-<div
+<!-- <div
   class="rounded-full w-20 h-20 absolute top-3 right-6 bg-pink-400 bg-opacity-70 overflow-hidden"
 >
   <img
@@ -92,7 +92,7 @@
     class="w-full h-full object-cover rounded-full"
     alt=""
   />
-</div>
+</div> -->
 
     <!-- Main Form Card -->
     <div
@@ -397,8 +397,8 @@
         }
 
         const profile = await liff.getProfile();
-        console.log("👤 LINE Profile:", profile);
-        document.getElementById('showimgProfile').src = profile.pictureUrl || "https://png.pngtree.com/png-clipart/20200224/original/pngtree-male-avatar-simple-cartoon-design-png-image_5230556.jpg"
+        // console.log("👤 LINE Profile:", profile);
+        // document.getElementById('showimgProfile').src = profile.pictureUrl || "https://png.pngtree.com/png-clipart/20200224/original/pngtree-male-avatar-simple-cartoon-design-png-image_5230556.jpg"
 
         const status = document.querySelector('[name="status"]').value;
         const isGov = status === "ข้าราชการ";
