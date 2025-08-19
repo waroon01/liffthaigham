@@ -32,28 +32,41 @@ document.addEventListener('DOMContentLoaded', () => {
   if (yearNowEl) yearNowEl.textContent = new Date().getFullYear();
 
   // --- LIFF Init ---
-  async function initLIFF() {
-    try {
-      await liff.init({ liffId: "1657704109-dZayMMoA", withLoginOnExternalBrowser: true }); // เปลี่ยนเป็น LIFF ID ของคุณ
+async function initLIFF() {
+  try {
+    // Init LIFF
+    await liff.init({ liffId: "1657704109-dZayMMoA", withLoginOnExternalBrowser: true });
 
-      if (liff.isLoggedIn()) {
-        const profile = await liff.getProfile();
-        console.log(profile)
-        console.log(liff.getDecodedIDToken().email)
-        // if (profileName) profileName.textContent = profile.displayName;
-        if (profileName) profileName.textContent = liff.getDecodedIDToken().email;
-        if (profileAvatar) profileAvatar.src = profile.pictureUrl || profileAvatar.src;
-        if (profileMeta) profileMeta.textContent = 'เชื่อมต่อ LIFF แล้ว';
-      } else {
-        // ถ้ายังไม่ได้ login
-        if (profileMeta) profileMeta.textContent = 'ยังไม่เชื่อมต่อ LIFF';
-        liff.login(); // จะ redirect login
+    // ถ้า login แล้ว
+    if (liff.isLoggedIn()) {
+      let profile;
+      try {
+        profile = await liff.getProfile();
+      } catch {
+        profile = null;
       }
-    } catch (err) {
-      console.error('LIFF init error:', err);
-      if (profileMeta) profileMeta.textContent = 'LIFF ไม่พร้อมใช้งาน';
+
+      // แสดงชื่อ/อีเมล/รูปโปรไฟล์
+      if (profileName) profileName.textContent = profile?.displayName || liff.getDecodedIDToken()?.email || 'ไม่ทราบชื่อ';
+      if (profileAvatar) profileAvatar.src = profile?.pictureUrl || profileAvatar.src;
+      if (profileMeta) profileMeta.textContent = 'เชื่อมต่อ LIFF แล้ว';
+    } 
+    // ถ้ายังไม่ได้ login
+    else {
+      if (!liff.isInClient()) {
+        // นอก LINE app → redirect login
+        liff.login();
+      } else {
+        // ใน LINE app แต่ยังไม่ได้ login
+        if (profileMeta) profileMeta.textContent = 'ยังไม่เชื่อมต่อ LIFF';
+      }
     }
+  } catch (err) {
+    console.error('LIFF init error:', err);
+    if (profileMeta) profileMeta.textContent = 'LIFF ไม่พร้อมใช้งาน';
   }
+}
+
 
   // --- call LIFF init ---
   initLIFF();
