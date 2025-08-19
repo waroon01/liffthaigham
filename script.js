@@ -120,60 +120,104 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => alertBox.classList.add('hidden'), 3000);
   }
 
-  async function submitForm(evt) {
-    evt.preventDefault();
-    if (!letterForm) return;
+async function submitForm(evt) {
+  evt.preventDefault();
+  if (!letterForm) return;
 
-    const payload = {
-      documentType: letterForm.documentType.value,
-      year: letterForm.year.value,
-      title: letterForm.title.value,
-      issuedBy: letterForm.issuedBy.value,
-      recipient: letterForm.recipient.value,
-      priority: letterForm.priority.value || 'NORMAL',
-      note: letterForm.note.value || null,
-    };
+  const payload = {
+    documentType: letterForm.documentType.value,
+    year: letterForm.year.value,
+    title: letterForm.title.value,
+    issuedBy: letterForm.issuedBy.value,
+    recipient: letterForm.recipient.value,
+    priority: letterForm.priority.value || 'NORMAL',
+    note: letterForm.note.value || null,
+  };
 
-    const errors = validate(payload);
-    if (Object.keys(errors).length > 0) {
-      showErrors(errors);
-      toast({ type: 'error', title: 'กรอกข้อมูลไม่ครบถ้วน', message: 'โปรดตรวจสอบช่องที่มีข้อความแจ้งเตือน' });
-      return;
-    }
-
-    showErrors({});
-    submitBtn.disabled = true;
-    if (submitSpinner) submitSpinner.classList.remove('hidden');
-
-    try {
-      const res = await fetch('https://line-esmodule-new.vercel.app/document/letter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        const msg = data?.message || data?.error || 'ไม่สามารถบันทึกได้';
-        throw new Error(msg);
-      }
-
-      toast({ type: 'success', title: 'บันทึกสำเร็จ', message: 'ระบบได้ออกเลขหนังสือแล้ว' });
-
-      const keep = { documentType: payload.documentType, year: payload.year };
-      letterForm.reset();
-      letterForm.documentType.value = keep.documentType;
-      letterForm.year.value = keep.year;
-      updateCounter(titleEl, titleCount);
-      updateCounter(noteEl, noteCount);
-
-    } catch (err) {
-      toast({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || 'โปรดลองใหม่อีกครั้ง' });
-    } finally {
-      submitBtn.disabled = false;
-      if (submitSpinner) submitSpinner.classList.add('hidden');
-    }
+  const errors = validate(payload);
+  if (Object.keys(errors).length > 0) {
+    showErrors(errors);
+    toast({ type: 'error', title: 'กรอกข้อมูลไม่ครบถ้วน', message: 'โปรดตรวจสอบช่องที่มีข้อความแจ้งเตือน' });
+    return;
   }
+
+  showErrors({});
+  submitBtn.disabled = true;
+  if (submitSpinner) submitSpinner.classList.remove('hidden');
+
+  try {
+    // 1. บันทึกข้อมูลลง DB
+    const res = await fetch('https://line-esmodule-new.vercel.app/document/letter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      const msg = data?.message || data?.error || 'ไม่สามารถบันทึกได้';
+      throw new Error(msg);
+    }
+
+    const newLetter = await res.json();
+
+    toast({ type: 'success', title: 'บันทึกสำเร็จ', message: 'ระบบได้ออกเลขหนังสือแล้ว' });
+
+    // 2. ส่ง Flex Message ผ่าน LIFF
+      const flexMessage = {
+        type: "flex",
+        altText: "รายละเอียดหนังสือใหม่",
+        contents: {
+          type: "bubble",
+          header: {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              { type: "text", text: "📄 หนังสือใหม่", weight: "bold", size: "lg", color: "#0000FF" }
+            ]
+          },
+          body: {
+            type: "box",
+            layout: "vertical",
+            spacing: "sm",
+            contents: [
+              { type: "text", text: `เลขที่: ${newLetter.fullNumber}`, weight: "bold" },
+              { type: "text", text: `เรื่อง: ${newLetter.title}` },
+              { type: "text", text: `ออกโดย: ${newLetter.issuedBy}` },
+              { type: "text", text: `ผู้รับ: ${newLetter.recipient}` },
+              { type: "text", text: `ชั้นความเร็ว: ${newLetter.priority}` },
+              { type: "text", text: `หมายเหตุ: ${newLetter.note || '-'}` }
+            ]
+          },
+          footer: {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              { type: "text", text: `ปี พ.ศ.: ${newLetter.year}`, size: "sm", color: "#aaaaaa" }
+            ]
+          }
+        }
+      };
+    if (liff.isInClient()) {
+      await liff.sendMessages([flexMessage]);
+    }
+
+    // 3. Reset form แต่เก็บ docType/year
+    const keep = { documentType: payload.documentType, year: payload.year };
+    letterForm.reset();
+    letterForm.documentType.value = keep.documentType;
+    letterForm.year.value = keep.year;
+    updateCounter(titleEl, titleCount);
+    updateCounter(noteEl, noteCount);
+
+  } catch (err) {
+    toast({ type: 'error', title: 'เกิดข้อผิดพลาด', message: err.message || 'โปรดลองใหม่อีกครั้ง' });
+  } finally {
+    submitBtn.disabled = false;
+    if (submitSpinner) submitSpinner.classList.add('hidden');
+  }
+}
+
 
   if (letterForm) letterForm.addEventListener('submit', submitForm);
 
