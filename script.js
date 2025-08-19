@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const profile = await liff.getProfile();
         console.log(profile)
         // if (profileName) profileName.textContent = profile.displayName;
-        if (profileName) profileName.textContent = liff.getDecodedIDToken().email;
+        if (profileName) profileName.textContent = liff.getDecodedIDToken().email || profile?.displayName;
         if (profileAvatar) profileAvatar.src = profile.pictureUrl || profileAvatar.src;
         if (profileMeta) profileMeta.textContent = 'เชื่อมต่อ LIFF แล้ว';
       } else {
