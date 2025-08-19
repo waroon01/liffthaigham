@@ -46,20 +46,7 @@
       };
     </script>
     <style type="text/css">
-      @font-face {
-        font-family: "line_seed_sans_th";
-        src: url("https://bit.ly/fontiton5") format("truetype");
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
 
-      body {
-        font-family: "line_seed_sans_th";
-        background-color: #f9fafb;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
 
       ::-webkit-scrollbar {
         width: 8px;
@@ -151,18 +138,7 @@
           }
 
           const friendship = await liff.getFriendship();
-          if (!friendship.friendFlag) {
-            Swal.fire({
-              icon: "error",
-              title: "เดี๋ยวก่อน!",
-              text: "คุณยังไม่ได้เป็นเพื่อนกับเรา",
-              confirmButtonText: "เพิ่มเพื่อน",
-            }).then(() => {
-              window.location = "https://line.me/R/ti/p/@108xuxpy";
-            });
-            return;
-          }
-
+          console.log(friendship)
           const profile = await liff.getProfile();
           document.getElementById(
             "displaynames"
