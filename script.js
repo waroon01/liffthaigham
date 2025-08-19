@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (liff.isLoggedIn()) {
         const profile = await liff.getProfile();
+        console.log(profile)
+        console.log(liff.getDecodedIDToken().email)
         // if (profileName) profileName.textContent = profile.displayName;
         if (profileName) profileName.textContent = liff.getDecodedIDToken().email;
         if (profileAvatar) profileAvatar.src = profile.pictureUrl || profileAvatar.src;
