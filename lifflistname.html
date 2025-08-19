@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://bit.ly/fontiton5"
+      type="text/css"
+      charset="utf-8"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#f5f3ff",
+                100: "#ede9fe",
+                200: "#ddd6fe",
+                300: "#c4b5fd",
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                700: "#6d28d9",
+                800: "#5b21b6",
+                900: "#4c1d95",
+              },
+              secondary: {
+                50: "#fefce8",
+                100: "#fef9c3",
+                200: "#fef08a",
+                300: "#fde047",
+                400: "#facc15",
+                500: "#eab308",
+                600: "#ca8a04",
+                700: "#a16207",
+                800: "#854d0e",
+                900: "#713f12",
+              },
+            },
+            animation: {
+              "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/css">
+      @font-face {
+        font-family: "line_seed_sans_th";
+        src: url("https://bit.ly/fontiton5") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      body {
+        font-family: "line_seed_sans_th";
+        background-color: #f9fafb;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c4b5fd;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a78bfa;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+      <div
+        class="absolute top-0 left-0 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"
+      ></div>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <img
+                id="profileurl"
+                src="https://lh3.googleusercontent.com/d/1Ck_OCfEW4dEp3A1k9yfQplYmW7qmwzFF"
+                class="h-10 w-10 rounded-full object-cover border-2 border-primary-300"
+                alt="Logo"
+              />
+            </div>
+            <div>
+              <span
+                id="displaynamefield"
+                class="text-lg font-semibold text-gray-800"
+                >Profile</span
+              >
+              <p class="text-xs text-gray-500">
+                บริการ รายชื่อนักเรียนอัตโนมัติ
+              </p>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <script>
+      $(document).ready(function () {
+        // $("#loadingOverlay").removeClass("hidden");
+
+        initializeLiff("1657704109-MYnLDDbZ");
+
+        // if (iduser) {
+        //   getData(iduser);
+        // } else {
+        //   setTimeout(function () {
+        //     $("#loadingOverlay").addClass("hidden");
+        //   }, 1500);
+        // }
+      });
+
+      async function initializeLiff(liffId) {
+        try {
+          await liff.init({ liffId, withLoginOnExternalBrowser: true });
+
+          if (!liff.isInClient() && !liff.isLoggedIn()) {
+            Swal.fire({
+              icon: "info",
+              title: "เข้าสู่ระบบ",
+              text: "กรุณาเข้าสู่ระบบบัญชี LINE ของคุณ",
+              confirmButtonText: "เข้าสู่ระบบ",
+            }).then(() => {
+              liff.login({ redirectUri: location.href });
+            });
+            return;
+          }
+
+          const friendship = await liff.getFriendship();
+          if (!friendship.friendFlag) {
+            Swal.fire({
+              icon: "error",
+              title: "เดี๋ยวก่อน!",
+              text: "คุณยังไม่ได้เป็นเพื่อนกับเรา",
+              confirmButtonText: "เพิ่มเพื่อน",
+            }).then(() => {
+              window.location = "https://line.me/R/ti/p/@108xuxpy";
+            });
+            return;
+          }
+
+          const profile = await liff.getProfile();
+          document.getElementById(
+            "displaynames"
+          ).textContent = `สถานะของคุณ ${profile.displayName}`;
+          document.getElementById("profileurl").src = `${profile.pictureUrl}`;
+          document.getElementById(
+            "displaynamefield"
+          ).textContent = ` ${profile.displayName}`;
+        } catch (err) {
+          console.error("LIFF Error:", err);
+          Swal.fire("ข้อผิดพลาด", "เกิดปัญหาในการประมวลผล", "error");
+        }
+      }
+    </script>
+  </body>
+</html>
