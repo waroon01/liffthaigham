@@ -138,9 +138,6 @@
           }
 
           const profile = await liff.getProfile();
-          document.getElementById(
-            "displaynames"
-          ).textContent = `สถานะของคุณ ${profile.displayName}`;
           document.getElementById("profileurl").src = `${profile.pictureUrl}`;
           document.getElementById(
             "displaynamefield"
