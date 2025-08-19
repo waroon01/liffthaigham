@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- call LIFF init ---
-  document.addEventListener('DOMContentLoaded', initLIFF);
+  initLIFF();
 
   // --- validation, showErrors, toast, submitForm ---
   function validate(formData) {
